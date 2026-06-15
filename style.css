@@ -138,10 +138,10 @@ input[type="text"]:focus{border-color: rgba(106,166,255,.7); box-shadow: 0 0 0 4
 
 .check{display:flex; align-items:center; gap:10px; width:100%; cursor: pointer;}
 .toggle{width:18px; height:18px; cursor: pointer;}
-.text{line-height:1.2; font-weight: 500;}
+.text{line-height:1.2; font-weight: 500; overflow-wrap:anywhere;}
 
 /* When checkbox and text are separated we use a wrapper */
-.check-wrap{display:flex; align-items:center; gap:10px; width:100%;}
+.check-wrap{display:flex; align-items:center; gap:10px; width:100%; min-width:0;}
 .check-wrap .check{width:auto; cursor:default}
 .check-wrap .text{cursor:text}
 
@@ -239,9 +239,9 @@ input[type="text"]:focus{border-color: rgba(106,166,255,.7); box-shadow: 0 0 0 4
 .subtasks-row{display:flex; flex-direction:column; gap:8px}
 .subtasks-list{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px}
 .subtask-item{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 10px; border-radius:10px; background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02)}
-.subtask-left{display:flex; align-items:center; gap:10px}
+.subtask-left{display:flex; align-items:center; gap:10px; min-width:0}
 .subtask-toggle{width:16px; height:16px}
-.subtask-text{color:var(--muted)}
+.subtask-text{color:var(--muted); overflow-wrap:anywhere}
 .subtask-item.completed .subtask-text{text-decoration:line-through; color: rgba(234,240,255,.45)}
 .subtask-form{display:flex; gap:8px; align-items:center}
 .subtask-input{flex:1; padding:8px 10px; border-radius:10px; border:1px solid var(--line); background: rgba(0,0,0,.15); color:var(--text)}

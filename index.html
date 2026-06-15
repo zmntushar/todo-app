@@ -21,7 +21,7 @@
     <section class="card" aria-label="Add a new todo">
       <form id="todo-form" class="form" autocomplete="off">
         <label class="sr-only" for="todo-input">New todo</label>
-        <input id="todo-input" type="text" placeholder="Add a task and press Enter..." maxlength="140" required />
+        <input id="todo-input" type="text" placeholder="Add a task and press Enter..." maxlength="1000" required />
         <button type="submit" class="btn primary">Add</button>
       </form>
 
@@ -81,14 +81,14 @@
         <input class="progress-input" type="range" min="0" max="100" step="1" value="0" aria-label="Set progress" />
       </div>
 
-      <input class="edit" type="text" />
+      <input class="edit" type="text" maxlength="1000" />
 
       <div class="subtasks-row">
         <ul class="subtasks-list"></ul>
 
         <form class="subtask-form" autocomplete="off">
           <label class="sr-only" for="subtask-input">New subtask</label>
-          <input class="subtask-input" type="text" placeholder="Add a subtask and press Add..." maxlength="140" />
+          <input class="subtask-input" type="text" placeholder="Add a subtask and press Add..." maxlength="1000" />
           <button class="btn" type="submit">Add</button>
         </form>
       </div>

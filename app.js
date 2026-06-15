@@ -9,6 +9,8 @@
 */
 
 const STORAGE_KEY = 'todo_app_items_v1';
+const TASK_TEXT_MAX_LENGTH = 1000;
+const SUBTASK_TEXT_MAX_LENGTH = 1000;
 
 /** @type {{id:string, text:string, completed:boolean, createdAt:number, progress:number}[]} */
 let todos = load();
@@ -26,6 +28,8 @@ const els = {
   toggleAll: document.querySelector('#toggle-all'),
   filterButtons: Array.from(document.querySelectorAll('[data-filter]')),
 };
+
+els.input.maxLength = TASK_TEXT_MAX_LENGTH;
 
 // Drag state
 let draggingId = null;
@@ -188,6 +192,7 @@ function createTodoNode(todo) {
   toggle.checked = todo.completed;
   text.textContent = todo.text;
   editInput.value = todo.text;
+  editInput.maxLength = TASK_TEXT_MAX_LENGTH;
 
   const initialProgress = clampProgress(todo.progress);
   progressInputEl.value = String(initialProgress);
@@ -237,6 +242,7 @@ function createTodoNode(todo) {
   const subtasksList = frag.querySelector('.subtasks-list');
   const subtaskForm = frag.querySelector('.subtask-form');
   const subtaskInput = frag.querySelector('.subtask-input');
+  subtaskInput.maxLength = SUBTASK_TEXT_MAX_LENGTH;
 
   function renderSubtasks() {
     subtasksList.innerHTML = '';
@@ -323,6 +329,7 @@ function createTodoNode(todo) {
         const input = document.createElement('input');
         input.type = 'text';
         input.className = 'subtask-edit';
+        input.maxLength = SUBTASK_TEXT_MAX_LENGTH;
         input.value = s.text;
         left.replaceChild(input, span);
         input.focus();
