@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Todo App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <nav class="card menu" aria-label="Main menu">
+      <a class="menu-link active" href="index.html" aria-current="page">Tasks</a>
+      <a class="menu-link" href="board.html">Post-it Board</a>
+    </nav>
+
+    <header class="header">
+      <h1>Todo</h1>
+      <p class="subtitle">A tiny HTML/CSS/JS todo list (saved to your browser).</p>
+    </header>
+
+    <section class="card" aria-label="Add a new todo">
+      <form id="todo-form" class="form" autocomplete="off">
+        <label class="sr-only" for="todo-input">New todo</label>
+        <input id="todo-input" type="text" placeholder="Add a task and press Enter..." maxlength="140" required />
+        <button type="submit" class="btn primary">Add</button>
+      </form>
+
+      <div class="toolbar">
+        <div class="filters" role="tablist" aria-label="Todo filters">
+          <button class="chip active" data-filter="all" type="button" role="tab" aria-selected="true">All</button>
+          <button class="chip" data-filter="active" type="button" role="tab" aria-selected="false">Active</button>
+          <button class="chip" data-filter="completed" type="button" role="tab" aria-selected="false">Completed</button>
+        </div>
+
+        <button id="clear-completed" class="btn ghost" type="button">Clear completed</button>
+      </div>
+    </section>
+
+    <section class="card" aria-label="Todo list">
+      <div class="meta">
+        <span id="count">0 items</span>
+        <button id="toggle-all" class="btn ghost" type="button" title="Toggle all">Toggle all</button>
+      </div>
+
+      <ul id="todo-list" class="list" aria-live="polite"></ul>
+
+      <p id="empty" class="empty">No todos yet. Add one above.</p>
+    </section>
+
+    <footer class="footer">
+      <small>Tip: double-click a todo to edit. Press Enter to save, Esc to cancel.</small>
+    </footer>
+  </main>
+
+  <template id="todo-item-template">
+    <li class="item">
+      <div class="row top">
+        <div class="check-wrap">
+          <label class="check">
+            <input class="toggle" type="checkbox" />
+          </label>
+          <span class="text"></span>
+        </div>
+
+        <div class="actions">
+          <button class="btn icon" data-action="edit" type="button" title="Edit">Edit</button>
+          <button class="btn icon danger" data-action="delete" type="button" title="Delete">Delete</button>
+        </div>
+      </div>
+
+      <div class="progress-row" aria-label="Progress">
+        <div class="progress-header">
+          <span class="progress-title">Progress</span>
+          <span class="progress-value" aria-live="polite">0%</span>
+        </div>
+
+        <div class="progress-track" aria-hidden="true">
+          <div class="progress-fill" style="width:0%"></div>
+        </div>
+
+        <input class="progress-input" type="range" min="0" max="100" step="1" value="0" aria-label="Set progress" />
+      </div>
+
+      <input class="edit" type="text" />
+
+      <div class="subtasks-row">
+        <ul class="subtasks-list"></ul>
+
+        <form class="subtask-form" autocomplete="off">
+          <label class="sr-only" for="subtask-input">New subtask</label>
+          <input class="subtask-input" type="text" placeholder="Add a subtask and press Add..." maxlength="140" />
+          <button class="btn" type="submit">Add</button>
+        </form>
+      </div>
+    </li>
+  </template>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

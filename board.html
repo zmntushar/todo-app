@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Post-it Board | Todo App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app board-app">
+    <nav class="card menu" aria-label="Main menu">
+      <a class="menu-link" href="index.html">Tasks</a>
+      <a class="menu-link active" href="board.html" aria-current="page">Post-it Board</a>
+    </nav>
+
+    <header class="header">
+      <h1>Post-it Board</h1>
+      <p class="subtitle">Pin ideas, drag to rearrange, and keep visual flow.</p>
+    </header>
+
+    <section class="card board-controls" aria-label="Create note">
+      <form id="note-form" class="board-form" autocomplete="off">
+        <label class="sr-only" for="note-input">New note</label>
+        <input id="note-input" type="text" maxlength="200" placeholder="Write a sticky note and press Add..." required />
+
+        <label for="note-color" class="control-label">Color</label>
+        <select id="note-color" class="select">
+          <option value="#fff59d">Sunny Yellow</option>
+          <option value="#ffd8a8">Peach</option>
+          <option value="#b2f2bb">Mint</option>
+          <option value="#a5d8ff">Sky</option>
+          <option value="#ffc9c9">Rose</option>
+          <option value="#e5dbff">Lavender</option>
+        </select>
+
+        <label for="note-size" class="control-label">Font</label>
+        <select id="note-size" class="select">
+          <option value="15">Medium</option>
+          <option value="13">Small</option>
+          <option value="18">Large</option>
+          <option value="21">XL</option>
+        </select>
+
+        <button type="submit" class="btn primary">Add</button>
+      </form>
+    </section>
+
+    <section class="card board-shell" aria-label="Post-it note board">
+      <div class="board-meta">
+        <span id="note-count">0 notes</span>
+      </div>
+      <div id="note-board" class="note-board" aria-live="polite"></div>
+      <p id="board-empty" class="empty">No notes yet. Add one above.</p>
+    </section>
+  </main>
+
+  <template id="note-template">
+    <article class="note" draggable="true">
+      <div class="note-top">
+        <select class="note-color select compact" aria-label="Change note color">
+          <option value="#fff59d">Yellow</option>
+          <option value="#ffd8a8">Peach</option>
+          <option value="#b2f2bb">Mint</option>
+          <option value="#a5d8ff">Sky</option>
+          <option value="#ffc9c9">Rose</option>
+          <option value="#e5dbff">Lavender</option>
+        </select>
+
+        <select class="note-size select compact" aria-label="Change note font size">
+          <option value="13">S</option>
+          <option value="15">M</option>
+          <option value="18">L</option>
+          <option value="21">XL</option>
+        </select>
+
+        <button class="btn icon danger" type="button" data-action="delete">Delete</button>
+      </div>
+
+      <p class="note-text"></p>
+    </article>
+  </template>
+
+  <script src="board.js" defer></script>
+</body>
+</html>
