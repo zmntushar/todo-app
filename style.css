@@ -233,8 +233,8 @@ h1{
   display:grid;
   place-items:center;
   border-radius:50%;
-  background:radial-gradient(circle at center, rgba(7, 9, 31, .94) 0 56%, transparent 57%);
-  box-shadow:0 0 30px rgba(77,103,255,.18), 0 0 40px rgba(143,72,255,.12);
+  background:none;
+  box-shadow:0 0 24px rgba(77,103,255,.14), 0 0 34px rgba(143,72,255,.1);
 }
 
 .progress-orb-ring{
@@ -248,11 +248,11 @@ h1{
 .progress-orb-track,
 .progress-orb-fill{
   fill:none;
-  stroke-width:8;
+  stroke-width:7;
 }
 
 .progress-orb-track{
-  stroke:rgba(52, 83, 166, .42);
+  stroke:rgba(43, 80, 166, .58);
 }
 
 .progress-orb-fill{
@@ -270,8 +270,8 @@ h1{
 .progress-orb span{
   position:relative;
   z-index:1;
-  font-size:23px;
-  font-weight:700;
+  font-size:22px;
+  font-weight:500;
   color:#fff;
   font-variant-numeric:tabular-nums;
 }
