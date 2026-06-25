@@ -519,6 +519,7 @@ function setProgressUI(valueEl, fillEl, progress) {
   const p = clampProgress(progress);
   valueEl.textContent = `${p}%`;
   fillEl.style.width = `${p}%`;
+  fillEl.classList.toggle('is-empty', p === 0);
 }
 
 function clampProgress(n) {
