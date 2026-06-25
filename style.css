@@ -20,9 +20,9 @@
   --radius-xl:26px;
   --shadow:0 26px 88px rgba(0,0,0,.5);
   --shadow-soft:0 16px 42px rgba(0,0,0,.32);
-  --glow-blue:0 0 38px rgba(56,189,248,.36);
-  --glow-purple:0 0 46px rgba(124,92,255,.48);
-  --gradient-primary:linear-gradient(135deg, #37bfff 0%, #5f75ff 48%, #a83dff 100%);
+  --glow-blue:0 0 38px rgba(80,112,255,.34);
+  --glow-purple:0 0 46px rgba(132,76,255,.5);
+  --gradient-primary:linear-gradient(135deg, #3867ff 0%, #6b4dff 52%, #9b37ff 100%);
   --gradient-surface:linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.035));
   --transition:180ms ease;
 }
@@ -110,8 +110,8 @@ body::before{
 .menu-link.active{
   color:#fff;
   border-color:rgba(116, 101, 255, .75);
-  background:linear-gradient(135deg, rgba(50,183,255,.38), rgba(124,92,255,.82));
-  box-shadow:0 0 0 1px rgba(255,255,255,.14) inset, 0 0 32px rgba(98,91,255,.48);
+  background:linear-gradient(135deg, rgba(58,82,214,.72), rgba(118,70,255,.86));
+  box-shadow:0 0 0 1px rgba(255,255,255,.14) inset, 0 0 32px rgba(105,76,255,.5);
 }
 
 .menu-icon{
@@ -357,13 +357,13 @@ input[type="text"]:focus,
 }
 
 .btn.primary{
-  border-color:rgba(99, 156, 255, .72);
+  border-color:rgba(128, 104, 255, .76);
   background:var(--gradient-primary);
-  box-shadow:0 14px 34px rgba(56,189,248,.28), 0 0 44px rgba(124,92,255,.38);
+  box-shadow:0 14px 34px rgba(74,98,255,.24), 0 0 44px rgba(132,76,255,.42);
 }
 
 .btn.primary:hover{
-  box-shadow:0 16px 42px rgba(56,189,248,.28), 0 0 48px rgba(124,92,255,.38);
+  box-shadow:0 16px 42px rgba(74,98,255,.3), 0 0 48px rgba(132,76,255,.48);
 }
 
 .btn.ghost{
@@ -426,7 +426,7 @@ input[type="text"]:focus,
 .chip.active{
   color:#fff;
   border-color:rgba(124,92,255,.72);
-  background:linear-gradient(135deg, rgba(56,189,248,.18), rgba(124,92,255,.4));
+  background:linear-gradient(135deg, rgba(61,79,210,.34), rgba(124,92,255,.48));
   box-shadow:var(--glow-purple);
 }
 
