@@ -266,7 +266,7 @@ h1{
 
 .progress-orb-track{
   stroke:rgba(74, 116, 226, .14);
-  stroke-width:4.5;
+  stroke-width:8;
   filter:blur(1.1px) drop-shadow(0 0 11px rgba(84, 125, 235, .22));
 }
 
