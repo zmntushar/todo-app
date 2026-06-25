@@ -32,6 +32,7 @@ const els = {
   statCompleted: document.querySelector('#stat-completed'),
   statOverall: document.querySelector('#stat-overall'),
   overallOrb: document.querySelector('#overall-orb'),
+  overallOrbRing: document.querySelector('#overall-orb-ring'),
   overallOrbValue: document.querySelector('#overall-orb-value'),
 };
 
@@ -182,7 +183,8 @@ function updateDashboard(activeCount) {
   if (els.statActive) els.statActive.textContent = String(activeCount);
   if (els.statCompleted) els.statCompleted.textContent = String(completed);
   if (els.statOverall) els.statOverall.textContent = `${overall}%`;
-  if (els.overallOrb) els.overallOrb.style.setProperty('--overall-progress', `${overall}%`);
+  if (els.overallOrb) els.overallOrb.classList.toggle('is-empty', overall === 0);
+  if (els.overallOrbRing) els.overallOrbRing.style.strokeDasharray = `${overall} 100`;
   if (els.overallOrbValue) els.overallOrbValue.textContent = `${overall}%`;
 }
 

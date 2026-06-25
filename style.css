@@ -198,7 +198,7 @@ h1{
   font-weight:700;
   line-height:.95;
   letter-spacing:0;
-  background:linear-gradient(90deg, #fbfcff 0%, #dbe3ff 38%, #6f83ff 100%);
+  background:linear-gradient(90deg, #ffffff 0%, #f5f1ff 24%, #a8acff 50%, #6678ff 72%, #3670ff 100%);
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
@@ -227,19 +227,49 @@ h1{
 }
 
 .progress-orb{
-  --overall-progress:0%;
+  position:relative;
   width:94px;
   height:94px;
   display:grid;
   place-items:center;
   border-radius:50%;
-  background:
-    radial-gradient(circle at center, rgba(12,16,48,.96) 0 58%, transparent 59%),
-    conic-gradient(from 0deg, #38bdf8 var(--overall-progress), rgba(124,92,255,.18) 0);
-  box-shadow:0 0 34px rgba(56,189,248,.22), 0 0 46px rgba(197,92,255,.16);
+  background:radial-gradient(circle at center, rgba(9, 11, 38, .96) 0 54%, rgba(15, 20, 62, .72) 55% 61%, transparent 62%);
+  box-shadow:0 0 34px rgba(77,103,255,.24), 0 0 46px rgba(143,72,255,.18);
+}
+
+.progress-orb-ring{
+  position:absolute;
+  width:100%;
+  height:100%;
+  overflow:visible;
+  transform:rotate(-90deg);
+}
+
+.progress-orb-track,
+.progress-orb-fill{
+  fill:none;
+  stroke-width:8;
+}
+
+.progress-orb-track{
+  stroke:rgba(72, 95, 174, .36);
+}
+
+.progress-orb-fill{
+  stroke:url(#overall-ring-gradient);
+  stroke-linecap:round;
+  stroke-dasharray:0 100;
+  filter:drop-shadow(0 0 5px rgba(78, 109, 255, .76)) drop-shadow(0 0 12px rgba(154, 72, 255, .45));
+  transition:stroke-dasharray 420ms cubic-bezier(.22, 1, .36, 1);
+}
+
+.progress-orb.is-empty .progress-orb-fill{
+  filter:none;
 }
 
 .progress-orb span{
+  position:relative;
+  z-index:1;
   font-size:23px;
   font-weight:700;
   color:#fff;
@@ -842,11 +872,11 @@ input[type="text"]:focus,
   border-radius:var(--radius-md);
   border:1px solid rgba(255,255,255,.48);
   background:
-    linear-gradient(140deg, rgba(255,255,255,.82) 0%, rgba(255,255,255,.34) 24%, rgba(255,255,255,.04) 54%),
-    radial-gradient(circle at 18% 12%, rgba(255,255,255,.68), transparent 28%),
+    linear-gradient(180deg, rgba(255,255,255,.1) 0%, rgba(255,255,255,.02) 42%, rgba(0,0,0,.14) 100%),
+    linear-gradient(140deg, rgba(255,255,255,.32) 0%, rgba(255,255,255,.1) 22%, rgba(0,0,0,.02) 55%),
     repeating-linear-gradient(0deg, rgba(0,0,0,.012) 0 1px, transparent 1px 7px),
     var(--note-bg);
-  box-shadow:0 22px 46px rgba(0,0,0,.38), 0 0 46px var(--note-glow), inset 0 1px 0 rgba(255,255,255,.7);
+  box-shadow:0 22px 46px rgba(0,0,0,.42), 0 0 34px var(--note-glow), inset 0 1px 0 rgba(255,255,255,.32);
   transform:rotate(var(--note-tilt, -1deg));
   transition:transform 200ms ease, box-shadow 200ms ease, opacity 200ms ease;
   cursor:grab;
@@ -859,7 +889,7 @@ input[type="text"]:focus,
 
 .note:hover{
   transform:rotate(0deg) translateY(-5px);
-  box-shadow:0 28px 54px rgba(0,0,0,.42), 0 0 48px var(--note-glow), inset 0 1px 0 rgba(255,255,255,.72);
+  box-shadow:0 30px 58px rgba(0,0,0,.48), 0 0 38px var(--note-glow), inset 0 1px 0 rgba(255,255,255,.34);
 }
 
 .note.dragging{

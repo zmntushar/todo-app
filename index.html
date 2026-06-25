@@ -27,7 +27,18 @@
       </div>
 
       <div class="overall-widget" aria-label="Overall progress">
-        <div class="progress-orb" id="overall-orb" style="--overall-progress:0%">
+        <div class="progress-orb" id="overall-orb">
+          <svg class="progress-orb-ring" viewBox="0 0 120 120" aria-hidden="true">
+            <defs>
+              <linearGradient id="overall-ring-gradient" x1="12" y1="60" x2="108" y2="60" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#2f6dff"></stop>
+                <stop offset="54%" stop-color="#647bff"></stop>
+                <stop offset="100%" stop-color="#b14dff"></stop>
+              </linearGradient>
+            </defs>
+            <circle class="progress-orb-track" cx="60" cy="60" r="45" pathLength="100"></circle>
+            <circle class="progress-orb-fill" id="overall-orb-ring" cx="60" cy="60" r="45" pathLength="100"></circle>
+          </svg>
           <span id="overall-orb-value">0%</span>
         </div>
         <span>Overall Progress</span>
