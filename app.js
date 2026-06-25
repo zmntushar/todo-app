@@ -27,6 +27,12 @@ const els = {
   clearCompleted: document.querySelector('#clear-completed'),
   toggleAll: document.querySelector('#toggle-all'),
   filterButtons: Array.from(document.querySelectorAll('[data-filter]')),
+  statTotal: document.querySelector('#stat-total'),
+  statActive: document.querySelector('#stat-active'),
+  statCompleted: document.querySelector('#stat-completed'),
+  statOverall: document.querySelector('#stat-overall'),
+  overallOrb: document.querySelector('#overall-orb'),
+  overallOrbValue: document.querySelector('#overall-orb-value'),
 };
 
 els.input.maxLength = TASK_TEXT_MAX_LENGTH;
@@ -160,8 +166,24 @@ function render() {
 
   const activeCount = todos.filter(t => !t.completed).length;
   els.count.textContent = `${activeCount} item${activeCount === 1 ? '' : 's'} left`;
+  updateDashboard(activeCount);
 
   els.empty.style.display = (visible.length === 0) ? 'block' : 'none';
+}
+
+function updateDashboard(activeCount) {
+  const total = todos.length;
+  const completed = todos.filter(t => t.completed).length;
+  const overall = total === 0
+    ? 0
+    : clampProgress(todos.reduce((sum, t) => sum + clampProgress(t.progress), 0) / total);
+
+  if (els.statTotal) els.statTotal.textContent = String(total);
+  if (els.statActive) els.statActive.textContent = String(activeCount);
+  if (els.statCompleted) els.statCompleted.textContent = String(completed);
+  if (els.statOverall) els.statOverall.textContent = `${overall}%`;
+  if (els.overallOrb) els.overallOrb.style.setProperty('--overall-progress', `${overall}%`);
+  if (els.overallOrbValue) els.overallOrbValue.textContent = `${overall}%`;
 }
 
 function createTodoNode(todo) {

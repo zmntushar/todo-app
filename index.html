@@ -9,19 +9,54 @@
 <body>
   <main class="app">
     <nav class="card menu" aria-label="Main menu">
-      <a class="menu-link active" href="index.html" aria-current="page">Tasks</a>
-      <a class="menu-link" href="board.html">Post-it Board</a>
+      <a class="menu-link active" href="index.html" aria-current="page">
+        <span class="menu-icon menu-icon-tasks" aria-hidden="true"></span>
+        <span>Tasks</span>
+      </a>
+      <a class="menu-link" href="board.html">
+        <span class="menu-icon menu-icon-board" aria-hidden="true"></span>
+        <span>Post-it Board</span>
+      </a>
     </nav>
 
-    <header class="header">
-      <h1>Todo</h1>
-      <p class="subtitle">A tiny HTML/CSS/JS todo list (saved to your browser).</p>
+    <header class="header hero-header">
+      <div>
+        <p class="eyebrow">Focus desk</p>
+        <h1>Todo</h1>
+        <p class="subtitle">A calm command center for priorities, subtasks, and momentum.</p>
+      </div>
+
+      <div class="overall-widget" aria-label="Overall progress">
+        <div class="progress-orb" id="overall-orb" style="--overall-progress:0%">
+          <span id="overall-orb-value">0%</span>
+        </div>
+        <span>Overall Progress</span>
+      </div>
     </header>
 
-    <section class="card" aria-label="Add a new todo">
+    <section class="dashboard" aria-label="Task dashboard">
+      <article class="stat-card">
+        <span class="stat-label">Total Tasks</span>
+        <strong id="stat-total">0</strong>
+      </article>
+      <article class="stat-card">
+        <span class="stat-label">Active</span>
+        <strong id="stat-active">0</strong>
+      </article>
+      <article class="stat-card">
+        <span class="stat-label">Completed</span>
+        <strong id="stat-completed">0</strong>
+      </article>
+      <article class="stat-card accent">
+        <span class="stat-label">Overall</span>
+        <strong id="stat-overall">0%</strong>
+      </article>
+    </section>
+
+    <section class="card composer-card" aria-label="Add a new todo">
       <form id="todo-form" class="form" autocomplete="off">
         <label class="sr-only" for="todo-input">New todo</label>
-        <input id="todo-input" type="text" placeholder="Add a task and press Enter..." maxlength="1000" required />
+        <input id="todo-input" type="text" placeholder="Add a task..." maxlength="1000" required />
         <button type="submit" class="btn primary">Add</button>
       </form>
 
@@ -36,7 +71,7 @@
       </div>
     </section>
 
-    <section class="card" aria-label="Todo list">
+    <section class="card list-panel" aria-label="Todo list">
       <div class="meta">
         <span id="count">0 items</span>
         <button id="toggle-all" class="btn ghost" type="button" title="Toggle all">Toggle all</button>
@@ -47,9 +82,6 @@
       <p id="empty" class="empty">No todos yet. Add one above.</p>
     </section>
 
-    <footer class="footer">
-      <small>Tip: double-click a todo to edit. Press Enter to save, Esc to cancel.</small>
-    </footer>
   </main>
 
   <template id="todo-item-template">
@@ -88,7 +120,7 @@
 
         <form class="subtask-form" autocomplete="off">
           <label class="sr-only" for="subtask-input">New subtask</label>
-          <input class="subtask-input" type="text" placeholder="Add a subtask and press Add..." maxlength="1000" />
+          <input class="subtask-input" type="text" placeholder="Add a subtask..." maxlength="1000" />
           <button class="btn" type="submit">Add</button>
         </form>
       </div>

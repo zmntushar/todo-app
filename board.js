@@ -83,6 +83,7 @@ function createNoteNode(note) {
 
   root.dataset.id = note.id;
   root.style.setProperty('--note-bg', sanitizeColor(note.color));
+  root.style.setProperty('--note-glow', getNoteGlow(note.color));
   root.style.setProperty('--note-font-size', `${clampSize(note.size)}px`);
 
   text.textContent = note.text;
@@ -223,6 +224,18 @@ function loadNotes() {
 function sanitizeColor(value) {
   const allowed = new Set(['#fff59d', '#ffd8a8', '#b2f2bb', '#a5d8ff', '#ffc9c9', '#e5dbff']);
   return allowed.has(String(value).toLowerCase()) ? String(value).toLowerCase() : '#fff59d';
+}
+
+function getNoteGlow(value) {
+  const glows = {
+    '#fff59d': 'rgba(255, 221, 92, .34)',
+    '#ffd8a8': 'rgba(255, 171, 94, .3)',
+    '#b2f2bb': 'rgba(89, 224, 132, .28)',
+    '#a5d8ff': 'rgba(77, 166, 255, .32)',
+    '#ffc9c9': 'rgba(255, 111, 145, .28)',
+    '#e5dbff': 'rgba(169, 121, 255, .3)',
+  };
+  return glows[sanitizeColor(value)] || glows['#fff59d'];
 }
 
 function clampSize(value) {

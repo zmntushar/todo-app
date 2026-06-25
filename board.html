@@ -9,19 +9,31 @@
 <body>
   <main class="app board-app">
     <nav class="card menu" aria-label="Main menu">
-      <a class="menu-link" href="index.html">Tasks</a>
-      <a class="menu-link active" href="board.html" aria-current="page">Post-it Board</a>
+      <a class="menu-link" href="index.html">
+        <span class="menu-icon menu-icon-tasks" aria-hidden="true"></span>
+        <span>Tasks</span>
+      </a>
+      <a class="menu-link active" href="board.html" aria-current="page">
+        <span class="menu-icon menu-icon-board" aria-hidden="true"></span>
+        <span>Post-it Board</span>
+      </a>
     </nav>
 
-    <header class="header">
-      <h1>Post-it Board</h1>
-      <p class="subtitle">Pin ideas, drag to rearrange, and keep visual flow.</p>
+    <header class="header board-header">
+      <div class="board-title-wrap">
+        <span class="board-mark" aria-hidden="true"></span>
+        <div>
+          <p class="eyebrow">Visual board</p>
+          <h1>Post-it Board</h1>
+          <p class="subtitle">Loose ideas, bright priorities, and open space.</p>
+        </div>
+      </div>
     </header>
 
     <section class="card board-controls" aria-label="Create note">
       <form id="note-form" class="board-form" autocomplete="off">
         <label class="sr-only" for="note-input">New note</label>
-        <input id="note-input" type="text" maxlength="200" placeholder="Write a sticky note and press Add..." required />
+        <input id="note-input" type="text" maxlength="500" placeholder="Write a sticky note..." required />
 
         <label for="note-color" class="control-label">Color</label>
         <select id="note-color" class="select">
@@ -41,13 +53,13 @@
           <option value="21">XL</option>
         </select>
 
-        <button type="submit" class="btn primary">Add</button>
+        <button type="submit" class="btn primary wide">Add</button>
       </form>
     </section>
 
     <section class="card board-shell" aria-label="Post-it note board">
       <div class="board-meta">
-        <span id="note-count">0 notes</span>
+        <span class="board-count" id="note-count">0 notes</span>
       </div>
       <div id="note-board" class="note-board" aria-live="polite"></div>
       <p id="board-empty" class="empty">No notes yet. Add one above.</p>
