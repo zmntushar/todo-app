@@ -56,7 +56,7 @@ body::before{
 }
 
 .app{
-  width:min(1120px, calc(100vw - 36px));
+  width:min(1000px, calc(100vw - 36px));
   margin:34px auto 46px;
   display:flex;
   flex-direction:column;
