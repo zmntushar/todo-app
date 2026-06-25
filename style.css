@@ -232,15 +232,29 @@ h1{
   height:94px;
   display:grid;
   place-items:center;
+  isolation:isolate;
   border-radius:50%;
   background:none;
-  box-shadow:0 0 24px rgba(77,103,255,.14), 0 0 34px rgba(143,72,255,.1);
+  box-shadow:0 0 28px rgba(77,103,255,.1), 0 0 42px rgba(143,72,255,.08);
+}
+
+.progress-orb::before{
+  content:"";
+  position:absolute;
+  inset:4px;
+  z-index:0;
+  border-radius:50%;
+  background:
+    radial-gradient(circle, transparent 46%, rgba(73, 112, 226, .14) 57%, rgba(144, 78, 255, .09) 69%, transparent 82%);
+  filter:blur(10px);
+  pointer-events:none;
 }
 
 .progress-orb-ring{
   position:absolute;
   width:100%;
   height:100%;
+  z-index:1;
   overflow:visible;
   transform:rotate(-90deg);
 }
@@ -248,15 +262,17 @@ h1{
 .progress-orb-track,
 .progress-orb-fill{
   fill:none;
-  stroke-width:7;
 }
 
 .progress-orb-track{
-  stroke:rgba(43, 80, 166, .58);
+  stroke:rgba(74, 116, 226, .14);
+  stroke-width:4.5;
+  filter:blur(1.1px) drop-shadow(0 0 11px rgba(84, 125, 235, .22));
 }
 
 .progress-orb-fill{
   stroke:url(#overall-ring-gradient);
+  stroke-width:7;
   stroke-linecap:round;
   stroke-dasharray:0 100;
   filter:drop-shadow(0 0 5px rgba(78, 109, 255, .76)) drop-shadow(0 0 12px rgba(154, 72, 255, .45));
@@ -269,7 +285,7 @@ h1{
 
 .progress-orb span{
   position:relative;
-  z-index:1;
+  z-index:2;
   font-size:22px;
   font-weight:500;
   color:#fff;
