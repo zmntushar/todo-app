@@ -710,7 +710,9 @@ input[type="text"]:focus,
 .edit{
   display:none;
   width:calc(100% - 42px);
+  max-width:calc(100% - 42px);
   margin-left:42px;
+  min-width:0;
 }
 
 .item.editing .check-wrap,
@@ -753,6 +755,12 @@ input[type="text"]:focus,
   display:flex;
   align-items:center;
   gap:10px;
+  flex:1 1 auto;
+  min-width:0;
+}
+
+.subtask-edit{
+  flex:1 1 auto;
   min-width:0;
 }
 
@@ -978,10 +986,20 @@ input[type="text"]:focus,
   min-height:128px;
   resize:vertical;
   border-color:rgba(17,24,39,.18);
-  background:rgba(255,255,255,.62);
+  background:#fff;
   color:#111827;
   padding:12px;
   line-height:1.45;
+}
+
+.note-edit:focus{
+  background:#fff;
+  color:#111827;
+}
+
+.note-edit::selection{
+  background:#dbeafe;
+  color:#111827;
 }
 
 @media (prefers-reduced-motion: reduce){
