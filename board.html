@@ -33,7 +33,7 @@
     <section class="card board-controls" aria-label="Create note">
       <form id="note-form" class="board-form" autocomplete="off">
         <label class="sr-only" for="note-input">New note</label>
-        <input id="note-input" type="text" maxlength="500" placeholder="Write a sticky note..." required />
+        <textarea id="note-input" class="autogrow" rows="1" maxlength="500" placeholder="Write a sticky note..." required></textarea>
 
         <label for="note-color" class="control-label">Color</label>
         <select id="note-color" class="select">
@@ -55,6 +55,8 @@
 
         <button type="submit" class="btn primary wide">Add</button>
       </form>
+
+      <p class="form-hint"><kbd>Enter</kbd> to add · <kbd>Shift</kbd> + <kbd>Enter</kbd> for a new line</p>
     </section>
 
     <section class="card board-shell" aria-label="Post-it note board">

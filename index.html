@@ -48,6 +48,7 @@
           <span id="overall-orb-value">0%</span>
         </div>
         <span>Overall Progress</span>
+        <p class="momentum-note" id="momentum-note">Add your first task to get rolling.</p>
       </div>
     </header>
 
@@ -73,9 +74,11 @@
     <section class="card composer-card" aria-label="Add a new todo">
       <form id="todo-form" class="form" autocomplete="off">
         <label class="sr-only" for="todo-input">New todo</label>
-        <input id="todo-input" type="text" placeholder="Add a task..." maxlength="1000" required />
+        <textarea id="todo-input" class="autogrow" rows="1" placeholder="Add a task..." maxlength="1000" required></textarea>
         <button type="submit" class="btn primary">Add</button>
       </form>
+
+      <p class="form-hint"><kbd>Enter</kbd> to add · <kbd>Shift</kbd> + <kbd>Enter</kbd> for a new line</p>
 
       <div class="toolbar">
         <div class="filters" role="tablist" aria-label="Todo filters">
@@ -103,6 +106,8 @@
 
   <template id="todo-item-template">
     <li class="item">
+      <span class="item-accent" aria-hidden="true"></span>
+
       <div class="row top">
         <div class="check-wrap">
           <label class="check">
@@ -120,7 +125,10 @@
       <div class="progress-row" aria-label="Progress">
         <div class="progress-header">
           <span class="progress-title">Progress</span>
-          <span class="progress-value" aria-live="polite">0%</span>
+          <label class="progress-entry">
+            <input class="progress-number" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" value="0" aria-label="Progress percent, type a value from 0 to 100" />
+            <span class="progress-unit" aria-hidden="true">%</span>
+          </label>
         </div>
 
         <div class="progress-track" aria-hidden="true">
@@ -130,14 +138,22 @@
         <input class="progress-input" type="range" min="0" max="100" step="1" value="0" aria-label="Set progress" />
       </div>
 
-      <input class="edit" type="text" maxlength="1000" />
+      <div class="edit-wrap">
+        <textarea class="edit autogrow" rows="1" maxlength="1000"></textarea>
+        <p class="edit-hint"><kbd>Enter</kbd> saves · <kbd>Shift</kbd> + <kbd>Enter</kbd> new line · <kbd>Esc</kbd> cancels</p>
+      </div>
 
       <div class="subtasks-row">
+        <div class="subtasks-head">
+          <span class="subtasks-label">Subtasks</span>
+          <span class="subtasks-count" aria-live="polite">0 / 0</span>
+        </div>
+
         <ul class="subtasks-list"></ul>
 
         <form class="subtask-form" autocomplete="off">
-          <label class="sr-only" for="subtask-input">New subtask</label>
-          <input class="subtask-input" type="text" placeholder="Add a subtask..." maxlength="1000" />
+          <label class="sr-only">New subtask</label>
+          <textarea class="subtask-input autogrow" rows="1" placeholder="Add a subtask..." maxlength="1000"></textarea>
           <button class="btn" type="submit">Add</button>
         </form>
       </div>

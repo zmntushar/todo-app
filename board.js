@@ -1,4 +1,6 @@
 const BOARD_STORAGE_KEY = 'todo_postit_board_v1';
+const NOTE_TEXT_MAX_LENGTH = 500;
+const TEXTAREA_MAX_HEIGHT = 320;
 
 /** @type {{id:string,text:string,color:string,size:number,createdAt:number}[]} */
 let notes = loadNotes();
@@ -14,11 +16,19 @@ const els = {
   tpl: document.querySelector('#note-template'),
 };
 
+els.input.maxLength = NOTE_TEXT_MAX_LENGTH;
+setupAutoGrow(els.input);
+submitOnEnter(els.input, () => addNote());
+
 let draggingId = null;
 
 els.form.addEventListener('submit', (e) => {
   e.preventDefault();
-  const text = (els.input.value || '').trim();
+  addNote();
+});
+
+function addNote() {
+  const text = normalizeText(els.input.value);
   if (!text) return;
 
   notes.unshift({
@@ -30,9 +40,10 @@ els.form.addEventListener('submit', (e) => {
   });
 
   els.input.value = '';
+  autoGrow(els.input);
   persistNotes();
   render();
-});
+}
 
 els.board.addEventListener('dragover', (e) => {
   e.preventDefault();
@@ -105,9 +116,13 @@ function createNoteNode(note) {
     render();
   });
 
-  text.addEventListener('dblclick', () => startInlineEdit(text, note.id));
+  text.addEventListener('dblclick', () => startInlineEdit(root, text, note.id));
 
   root.addEventListener('dragstart', (e) => {
+    if (root.classList.contains('editing')) {
+      e.preventDefault();
+      return;
+    }
     draggingId = note.id;
     root.classList.add('dragging');
     try { e.dataTransfer.setData('text/plain', note.id); } catch {}
@@ -122,20 +137,31 @@ function createNoteNode(note) {
   return frag;
 }
 
-function startInlineEdit(textNode, noteId) {
+function startInlineEdit(root, textNode, noteId) {
   const current = getNote(noteId);
   if (!current) return;
 
+  root.classList.add('editing');
+  root.draggable = false;
+
   const input = document.createElement('textarea');
-  input.className = 'note-edit';
+  input.className = 'note-edit autogrow';
+  input.maxLength = NOTE_TEXT_MAX_LENGTH;
   input.value = current.text;
 
   textNode.replaceWith(input);
+  setupAutoGrow(input);
+  autoGrow(input);
   input.focus();
-  input.select();
+  input.setSelectionRange(input.value.length, input.value.length);
+
+  let settled = false;
 
   const commit = () => {
-    const next = (input.value || '').trim();
+    if (settled) return;
+    settled = true;
+
+    const next = normalizeText(input.value);
     if (!next) {
       notes = notes.filter((n) => n.id !== noteId);
       persistNotes();
@@ -146,10 +172,14 @@ function startInlineEdit(textNode, noteId) {
     updateNote(noteId, { text: next });
   };
 
-  const cancel = () => render();
+  const cancel = () => {
+    if (settled) return;
+    settled = true;
+    render();
+  };
 
   input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
       e.preventDefault();
       commit();
     }
@@ -182,6 +212,7 @@ function updateNote(id, patch) {
     return {
       ...n,
       ...patch,
+      text: normalizeText(patch.text ?? n.text),
       color: sanitizeColor(patch.color ?? n.color),
       size: clampSize(Number(patch.size ?? n.size)),
     };
@@ -211,7 +242,7 @@ function loadNotes() {
       .filter((x) => x && typeof x.id === 'string' && typeof x.text === 'string')
       .map((x) => ({
         id: x.id,
-        text: x.text,
+        text: normalizeText(x.text),
         color: sanitizeColor(x.color),
         size: clampSize(Number(x.size)),
         createdAt: typeof x.createdAt === 'number' ? x.createdAt : Date.now(),
@@ -219,6 +250,52 @@ function loadNotes() {
   } catch {
     return [];
   }
+}
+
+/**
+ * Keep stored note text tidy so notes render consistently:
+ * normalize line endings, strip trailing spaces per line,
+ * collapse runs of blank lines to one, and trim the edges.
+ */
+function normalizeText(value) {
+  return String(value ?? '')
+    .replace(/\r\n?/g, '\n')
+    .split('\n')
+    .map((line) => line.replace(/[ \t]+$/, ''))
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+function autoGrow(el) {
+  if (!el) return;
+
+  el.style.height = 'auto';
+
+  // scrollHeight excludes borders, but box-sizing is border-box, so add them
+  // back or every field loses a couple of pixels and starts scrolling.
+  const cs = getComputedStyle(el);
+  const borders = (parseFloat(cs.borderTopWidth) || 0) + (parseFloat(cs.borderBottomWidth) || 0);
+  const full = el.scrollHeight + borders;
+
+  el.style.height = `${Math.min(full, TEXTAREA_MAX_HEIGHT)}px`;
+  el.classList.toggle('is-scrolling', full > TEXTAREA_MAX_HEIGHT);
+}
+
+function setupAutoGrow(el) {
+  if (!el || el._autoGrowBound) return;
+  el._autoGrowBound = true;
+  el.addEventListener('input', () => autoGrow(el));
+  autoGrow(el);
+}
+
+function submitOnEnter(el, handler) {
+  el.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+      e.preventDefault();
+      handler();
+    }
+  });
 }
 
 function sanitizeColor(value) {
