@@ -494,6 +494,41 @@ kbd{
   line-height:1.5;
 }
 
+/* ---------- Non-editable chrome ----------
+   Controls and label text should never take a text caret or look typeable. */
+
+.menu-link,
+.btn,
+.chip,
+.select,
+.check,
+kbd,
+.toolbar,
+.meta,
+.board-meta,
+.board-count,
+.stat-label,
+.control-label,
+.form-hint,
+.edit-hint,
+.eyebrow,
+.progress-title,
+.progress-unit,
+.subtasks-head{
+  -webkit-user-select:none;
+  user-select:none;
+}
+
+.meta,
+.board-count,
+.subtasks-head{
+  cursor:default;
+}
+
+.select{
+  cursor:pointer;
+}
+
 /* ---------- Buttons ---------- */
 
 .btn{
