@@ -504,7 +504,10 @@ kbd{
   user-select:none;
 }
 
-input,
+/* Only fields you actually type into opt back into text selection. Sliders and
+   checkboxes are dragged, not typed, and allowing selection there lets a drag
+   start a text selection and leave a caret sitting on the control. */
+input:not([type=range]):not([type=checkbox]),
 textarea{
   -webkit-user-select:text;
   user-select:text;
@@ -943,6 +946,21 @@ input.progress-number:focus{
   cursor:ew-resize;
   position:relative;
   z-index:2;
+  -webkit-user-select:none;
+  user-select:none;
+  caret-color:transparent;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* No ring while dragging with the mouse; keyboard focus still shows one. */
+.progress-input:focus{
+  outline:none;
+}
+
+.progress-input:focus-visible{
+  outline:2px solid rgba(56,189,248,.9);
+  outline-offset:2px;
+  border-radius:999px;
 }
 
 .progress-input::-webkit-slider-runnable-track{
