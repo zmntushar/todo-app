@@ -495,28 +495,19 @@ kbd{
 }
 
 /* ---------- Non-editable chrome ----------
-   Controls and label text should never take a text caret or look typeable. */
+   Only form fields take a text caret. Everything else in the shell - labels,
+   control text, and the whitespace between laid-out elements - must not accept
+   an insertion point, or clicking near a button drops a caret into it. */
 
-.menu-link,
-.btn,
-.chip,
-.select,
-.check,
-kbd,
-.toolbar,
-.meta,
-.board-meta,
-.board-count,
-.stat-label,
-.control-label,
-.form-hint,
-.edit-hint,
-.eyebrow,
-.progress-title,
-.progress-unit,
-.subtasks-head{
+.app{
   -webkit-user-select:none;
   user-select:none;
+}
+
+input,
+textarea{
+  -webkit-user-select:text;
+  user-select:text;
 }
 
 .meta,
