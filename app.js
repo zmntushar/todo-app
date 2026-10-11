@@ -7,6 +7,7 @@
   - Persists to localStorage
   - Drag & drop reorder (when filter = all)
   - Per-task progress (0-100) via slider or typed value
+  - Optional item count (done / total) that drives the progress
 */
 
 const STORAGE_KEY = 'todo_app_items_v1';
@@ -14,8 +15,9 @@ const TASK_TEXT_MAX_LENGTH = 1000;
 const SUBTASK_TEXT_MAX_LENGTH = 1000;
 const TEXTAREA_MAX_HEIGHT = 360;
 const CELEBRATION_MS = 1100;
+const ITEM_COUNT_MAX = 99999;
 
-/** @type {{id:string, text:string, completed:boolean, createdAt:number, progress:number, subtasks:{id:string,text:string,completed:boolean}[]}[]} */
+/** @type {{id:string, text:string, completed:boolean, createdAt:number, progress:number, itemsTotal:number|null, itemsDone:number|null, subtasks:{id:string,text:string,completed:boolean}[]}[]} */
 let todos = load();
 
 let currentFilter = 'all';
@@ -71,6 +73,8 @@ function addTodoFromComposer() {
     completed: false,
     createdAt: Date.now(),
     progress: 0,
+    itemsTotal: null,
+    itemsDone: null,
     subtasks: [],
   });
 
@@ -103,6 +107,7 @@ els.toggleAll.addEventListener('click', () => {
     } else {
       if (next.progress === 100) next.progress = 0;
     }
+    if (hasItemCount(next)) next.itemsDone = itemsFromProgress(next.progress, next.itemsTotal);
     return next;
   });
 
@@ -258,6 +263,14 @@ function createTodoNode(todo) {
   const progressValueEl = frag.querySelector('.progress-number');
   const progressFillEl = frag.querySelector('.progress-fill');
   const progressInputEl = frag.querySelector('.progress-input');
+  const progressHeaderEl = frag.querySelector('.progress-header');
+
+  const itemsRevealBtn = frag.querySelector('.items-reveal');
+  const itemsEntryEl = frag.querySelector('.items-entry');
+  const itemsDoneEl = frag.querySelector('.items-done');
+  const itemsTotalEl = frag.querySelector('.items-total');
+  const itemsUnitEl = frag.querySelector('.items-unit');
+  const itemsClearBtn = frag.querySelector('.items-clear');
 
   li.dataset.id = todo.id;
   li.classList.toggle('completed', todo.completed);
@@ -283,6 +296,7 @@ function createTodoNode(todo) {
   const initialProgress = clampProgress(todo.progress);
   progressInputEl.value = String(initialProgress);
   setProgressUI(li, progressValueEl, progressFillEl, initialProgress);
+  resetItemsUI();
 
   toggle.addEventListener('change', () => {
     const checked = toggle.checked;
@@ -303,7 +317,7 @@ function createTodoNode(todo) {
   // --- Keep drag-to-reorder from fighting the progress controls ---
   const disableDrag = () => { li.draggable = false; };
   const enableDrag = () => {
-    if (isReorderEnabled() && !li.classList.contains('editing') && document.activeElement !== progressValueEl) {
+    if (isReorderEnabled() && !li.classList.contains('editing') && !progressHeaderEl.contains(document.activeElement)) {
       li.draggable = true;
     }
   };
@@ -311,9 +325,23 @@ function createTodoNode(todo) {
   progressInputEl.addEventListener('mousedown', disableDrag);
   progressInputEl.addEventListener('touchstart', disableDrag, { passive: true });
   progressValueEl.addEventListener('mousedown', disableDrag);
+  itemsEntryEl.addEventListener('mousedown', disableDrag);
+
+  // A percentage from the slider or the typed field. With an item count it snaps
+  // to a whole number of items, and the done field follows along.
+  const previewPercent = (raw) => {
+    const total = getTodo(todo.id)?.itemsTotal;
+    const v = clampProgress(raw);
+    if (!(total > 0)) return v;
+
+    const done = itemsFromProgress(v, total);
+    itemsDoneEl.value = String(done);
+    fitCountField(itemsDoneEl);
+    return progressFromItems(done, total);
+  };
 
   progressInputEl.addEventListener('input', () => {
-    const v = clampProgress(Number(progressInputEl.value));
+    const v = previewPercent(Number(progressInputEl.value));
     setProgressUI(li, progressValueEl, progressFillEl, v);
   });
 
@@ -333,7 +361,7 @@ function createTodoNode(todo) {
     if (capped !== progressValueEl.value) progressValueEl.value = capped;
     if (capped === '') return;
 
-    const v = clampProgress(Number(capped));
+    const v = previewPercent(Number(capped));
     progressInputEl.value = String(v);
     setProgressFillUI(li, progressFillEl, v);
   });
@@ -347,10 +375,7 @@ function createTodoNode(todo) {
 
     if (e.key === 'Escape') {
       e.preventDefault();
-      const stored = clampProgress(getTodo(todo.id)?.progress ?? 0);
-      progressValueEl.value = String(stored);
-      progressInputEl.value = String(stored);
-      setProgressFillUI(li, progressFillEl, stored);
+      revertProgressUI();
       progressValueEl.blur();
       return;
     }
@@ -358,8 +383,9 @@ function createTodoNode(todo) {
     if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
       e.preventDefault();
       const step = (e.shiftKey ? 10 : 1) * (e.key === 'ArrowUp' ? 1 : -1);
-      const v = clampProgress(Number(progressValueEl.value || 0) + step);
-      progressValueEl.value = String(v);
+      const raw = clampProgress(Number(progressValueEl.value || 0) + step);
+      const v = previewPercent(raw);
+      progressValueEl.value = String(raw);
       progressInputEl.value = String(v);
       setProgressFillUI(li, progressFillEl, v);
     }
@@ -369,9 +395,7 @@ function createTodoNode(todo) {
     const stored = clampProgress(getTodo(todo.id)?.progress ?? 0);
 
     if (progressValueEl.value === '') {
-      progressValueEl.value = String(stored);
-      progressInputEl.value = String(stored);
-      setProgressFillUI(li, progressFillEl, stored);
+      revertProgressUI();
       enableDrag();
       return;
     }
@@ -379,6 +403,129 @@ function createTodoNode(todo) {
     const next = clampProgress(Number(progressValueEl.value));
     enableDrag();
     if (next !== stored) commitProgress(todo.id, next);
+    else resetItemsUI();
+  });
+
+  function revertProgressUI() {
+    const stored = clampProgress(getTodo(todo.id)?.progress ?? 0);
+    setProgressUI(li, progressValueEl, progressFillEl, stored);
+    progressInputEl.value = String(stored);
+    resetItemsUI();
+  }
+
+  // --- Item count (done / total). Both blank = plain slider progress. ---
+  function resetItemsUI() {
+    const t = getTodo(todo.id) || todo;
+    itemsDoneEl.value = t.itemsDone ?? '';
+    itemsTotalEl.value = t.itemsTotal ?? '';
+    li.classList.toggle('has-items', t.itemsTotal != null || t.itemsDone != null);
+    li.classList.remove('items-open');
+    syncItemsFields();
+  }
+
+  // Sizes the fields, words the unit, and flags a done count still waiting on a total.
+  function syncItemsFields() {
+    const done = parseCount(itemsDoneEl.value);
+    const total = parseCount(itemsTotalEl.value);
+    const stored = getTodo(todo.id)?.progress ?? 0;
+
+    // With only a total typed, show the count the current progress works out to.
+    itemsDoneEl.placeholder = (total > 0) ? String(itemsFromProgress(stored, total)) : '0';
+    itemsUnitEl.textContent = (total === 1) ? 'item' : 'items';
+    itemsEntryEl.classList.toggle('needs-total', done !== null && !(total > 0));
+    fitCountField(itemsDoneEl);
+    fitCountField(itemsTotalEl);
+  }
+
+  function previewItems() {
+    syncItemsFields();
+    const total = parseCount(itemsTotalEl.value);
+    if (!(total > 0)) return;
+
+    const typed = parseCount(itemsDoneEl.value);
+    const done = (typed === null) ? itemsFromProgress(getTodo(todo.id)?.progress ?? 0, total) : Math.min(typed, total);
+    const v = progressFromItems(done, total);
+    setProgressUI(li, progressValueEl, progressFillEl, v);
+    progressInputEl.value = String(v);
+  }
+
+  function commitItemsFromFields() {
+    const prev = getTodo(todo.id);
+    if (!prev) return;
+
+    const done = parseCount(itemsDoneEl.value);
+    const total = parseCount(itemsTotalEl.value);
+    if (done === prev.itemsDone && total === prev.itemsTotal) {
+      revertProgressUI();
+      enableDrag();
+      return;
+    }
+    commitItemCount(todo.id, done, total);
+  }
+
+  itemsRevealBtn.addEventListener('click', () => {
+    disableDrag();
+    li.classList.add('items-open');
+    syncItemsFields();
+    itemsTotalEl.focus();
+  });
+
+  for (const field of [itemsDoneEl, itemsTotalEl]) {
+    field.addEventListener('focus', () => {
+      disableDrag();
+      field.select();
+    });
+
+    field.addEventListener('input', () => {
+      const digits = field.value.replace(/[^0-9]/g, '').slice(0, 5);
+      if (digits !== field.value) field.value = digits;
+      previewItems();
+    });
+
+    field.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        field.blur();
+        return;
+      }
+
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        revertProgressUI();
+        field.blur();
+        return;
+      }
+
+      // Up / Down tick the count by one, or ten with Shift.
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        const step = (e.shiftKey ? 10 : 1) * (e.key === 'ArrowUp' ? 1 : -1);
+        const total = parseCount(itemsTotalEl.value);
+        const countsDone = (field === itemsDoneEl && total > 0);
+        const start = parseCount(field.value) ?? (countsDone ? Number(itemsDoneEl.placeholder) : 0);
+        const ceiling = countsDone ? total : ITEM_COUNT_MAX;
+        field.value = String(Math.max(0, Math.min(ceiling, start + step)));
+        previewItems();
+      }
+    });
+  }
+
+  // Commit once focus leaves the pair, so tabbing from done to total stays put.
+  itemsEntryEl.addEventListener('focusout', (e) => {
+    if (e.relatedTarget && itemsEntryEl.contains(e.relatedTarget)) return;
+    commitItemsFromFields();
+  });
+
+  // Keep focus where it is so the fields don't commit before the clear lands.
+  itemsClearBtn.addEventListener('mousedown', (e) => e.preventDefault());
+  itemsClearBtn.addEventListener('click', () => {
+    const prev = getTodo(todo.id);
+    if (prev && prev.itemsTotal == null && prev.itemsDone == null) {
+      revertProgressUI();
+      enableDrag();
+      return;
+    }
+    commitItemCount(todo.id, null, null);
   });
 
   delBtn.addEventListener('click', () => {
@@ -685,6 +832,37 @@ function createTodoNode(todo) {
 }
 
 function commitProgress(id, value) {
+  const prev = getTodo(id);
+  if (!prev) return;
+
+  // With an item count, a percentage snaps to the nearest whole item.
+  if (hasItemCount(prev)) {
+    const done = itemsFromProgress(value, prev.itemsTotal);
+    applyProgress(id, progressFromItems(done, prev.itemsTotal), { itemsDone: done });
+    return;
+  }
+
+  applyProgress(id, value);
+}
+
+function commitItemCount(id, done, total) {
+  const prev = getTodo(id);
+  if (!prev) return;
+
+  const itemsTotal = (total !== null && total > 0) ? total : null;
+
+  if (itemsTotal === null) {
+    // No total means nothing to divide by: keep the slider's value as it is.
+    updateTodo(id, { itemsTotal: null, itemsDone: done });
+    return;
+  }
+
+  // A total on its own picks up the progress the task already has.
+  const itemsDone = Math.min(done ?? itemsFromProgress(prev.progress, itemsTotal), itemsTotal);
+  applyProgress(id, progressFromItems(itemsDone, itemsTotal), { itemsTotal, itemsDone });
+}
+
+function applyProgress(id, value, extra = {}) {
   const v = clampProgress(value);
   const prev = getTodo(id);
   if (!prev) return;
@@ -694,7 +872,29 @@ function commitProgress(id, value) {
 
   if (v === 100 && clampProgress(prev.progress) < 100) celebrate(id);
 
-  updateTodo(id, { progress: v, completed: nextCompleted });
+  updateTodo(id, { ...extra, progress: v, completed: nextCompleted });
+}
+
+function hasItemCount(todo) {
+  return Boolean(todo) && Number.isFinite(todo.itemsTotal) && todo.itemsTotal > 0;
+}
+
+/** Percent for done / total. Partial counts never read as 0% or 100%. */
+function progressFromItems(done, total) {
+  if (!(total > 0)) return 0;
+  const d = Math.max(0, Math.min(total, done || 0));
+  if (d === 0) return 0;
+  if (d === total) return 100;
+  return Math.max(1, Math.min(99, Math.round((d / total) * 100)));
+}
+
+function itemsFromProgress(progress, total) {
+  return Math.round((clampProgress(progress) / 100) * total);
+}
+
+function parseCount(value) {
+  const digits = String(value ?? '').replace(/[^0-9]/g, '');
+  return digits === '' ? null : Math.min(Number(digits), ITEM_COUNT_MAX);
 }
 
 function celebrate(id) {
@@ -706,6 +906,11 @@ function setProgressUI(li, valueEl, fillEl, progress) {
   const p = clampProgress(progress);
   valueEl.value = String(p);
   setProgressFillUI(li, fillEl, p);
+}
+
+function fitCountField(el) {
+  const len = Math.max(1, String(el.value || el.placeholder || '').length);
+  el.style.width = `${len + 0.6}ch`;
 }
 
 function setProgressFillUI(li, fillEl, progress) {
@@ -833,6 +1038,10 @@ function updateTodo(id, patch) {
     const next = { ...t, ...patch };
     next.progress = clampProgress(next.progress);
     if (next.completed) next.progress = 100;
+    // Checking, unchecking or otherwise moving the percent keeps the count in step.
+    if (hasItemCount(next) && !('itemsDone' in patch) && next.progress !== clampProgress(t.progress)) {
+      next.itemsDone = itemsFromProgress(next.progress, next.itemsTotal);
+    }
     return next;
   });
 
@@ -856,7 +1065,16 @@ function load() {
       .filter(x => x && typeof x.id === 'string' && typeof x.text === 'string')
       .map(x => {
         const completed = Boolean(x.completed);
-        const progress = clampProgress(typeof x.progress === 'number' ? x.progress : (completed ? 100 : 0));
+        let progress = clampProgress(typeof x.progress === 'number' ? x.progress : (completed ? 100 : 0));
+
+        const itemsTotal = isCount(x.itemsTotal) && x.itemsTotal > 0 ? Math.min(x.itemsTotal, ITEM_COUNT_MAX) : null;
+        let itemsDone = isCount(x.itemsDone) ? Math.min(x.itemsDone, ITEM_COUNT_MAX) : null;
+        if (itemsTotal !== null) {
+          if (completed) itemsDone = itemsTotal;
+          else if (itemsDone === null) itemsDone = itemsFromProgress(progress, itemsTotal);
+          itemsDone = Math.min(itemsDone, itemsTotal);
+          progress = progressFromItems(itemsDone, itemsTotal);
+        }
 
         const subsRaw = Array.isArray(x.subtasks) ? x.subtasks : [];
         const subs = subsRaw
@@ -869,12 +1087,18 @@ function load() {
           completed,
           createdAt: typeof x.createdAt === 'number' ? x.createdAt : Date.now(),
           progress: completed ? 100 : progress,
+          itemsTotal,
+          itemsDone,
           subtasks: subs,
         };
       });
   } catch {
     return [];
   }
+}
+
+function isCount(n) {
+  return Number.isInteger(n) && n >= 0;
 }
 
 function cryptoRandomId() {

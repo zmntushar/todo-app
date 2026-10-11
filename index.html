@@ -125,10 +125,23 @@
       <div class="progress-row" aria-label="Progress">
         <div class="progress-header">
           <span class="progress-title">Progress</span>
-          <label class="progress-entry">
-            <input class="progress-number" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" value="0" aria-label="Progress percent, type a value from 0 to 100" />
-            <span class="progress-unit" aria-hidden="true">%</span>
-          </label>
+          <div class="progress-meta">
+            <button class="items-reveal" type="button" title="Track progress as items done out of a total">
+              <span class="items-reveal-icon" aria-hidden="true">+</span>
+              <span>Count items</span>
+            </button>
+            <div class="items-entry" role="group" aria-label="Item count">
+              <input class="items-number items-done" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5" placeholder="0" aria-label="Items completed" />
+              <span class="items-sep" aria-hidden="true">/</span>
+              <input class="items-number items-total" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="5" placeholder="total" aria-label="Total items" />
+              <span class="items-unit" aria-hidden="true">items</span>
+              <button class="items-clear" type="button" title="Stop counting items" aria-label="Stop counting items">&times;</button>
+            </div>
+            <label class="progress-entry">
+              <input class="progress-number" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" value="0" aria-label="Progress percent, type a value from 0 to 100" />
+              <span class="progress-unit" aria-hidden="true">%</span>
+            </label>
+          </div>
         </div>
 
         <div class="progress-track" aria-hidden="true">

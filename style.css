@@ -810,9 +810,201 @@ textarea{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  flex-wrap:wrap;
+  gap:8px 12px;
   color:var(--muted);
   font-size:15px;
   font-weight:600;
+}
+
+.progress-meta{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+  gap:8px;
+  min-width:0;
+}
+
+/* ---------- Item count (done / total) ---------- */
+
+.items-reveal{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  min-height:30px;
+  padding:0 11px;
+  border-radius:9px;
+  border:1px dashed rgba(184,199,255,.22);
+  background:transparent;
+  color:var(--muted);
+  font:inherit;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  opacity:.62;
+  transition:opacity var(--transition), border-color var(--transition), background var(--transition), color var(--transition);
+}
+
+.item:hover .items-reveal,
+.items-reveal:focus-visible{
+  opacity:1;
+}
+
+.items-reveal:hover{
+  border-color:rgba(56,189,248,.55);
+  border-style:solid;
+  background:rgba(56,189,248,.08);
+  color:var(--muted-strong);
+}
+
+.items-reveal:focus-visible{
+  outline:2px solid rgba(56,189,248,.9);
+  outline-offset:2px;
+}
+
+.items-reveal-icon{
+  font-size:15px;
+  line-height:1;
+  color:var(--primary);
+}
+
+.items-entry{
+  display:none;
+  align-items:center;
+  gap:4px;
+  min-height:30px;
+  padding:0 4px 0 10px;
+  border-radius:9px;
+  border:1px solid rgba(184,199,255,.16);
+  background:rgba(255,255,255,.035);
+  transition:border-color var(--transition), background var(--transition), box-shadow var(--transition);
+  cursor:text;
+}
+
+.item.has-items .items-entry,
+.item.items-open .items-entry{
+  display:inline-flex;
+}
+
+.item.has-items .items-reveal,
+.item.items-open .items-reveal{
+  display:none;
+}
+
+.item.items-open:not(.has-items) .items-entry{
+  animation:items-entry-in 220ms cubic-bezier(.22, 1, .36, 1);
+}
+
+@keyframes items-entry-in{
+  from{opacity:0; transform:translateX(6px)}
+  to{opacity:1; transform:none}
+}
+
+.items-entry:hover{
+  border-color:rgba(184,199,255,.28);
+  background:rgba(255,255,255,.055);
+}
+
+.items-entry:focus-within{
+  border-color:rgba(56,189,248,.72);
+  background:rgba(8, 13, 38, .8);
+  box-shadow:0 0 0 3px rgba(56,189,248,.14);
+}
+
+input.items-number{
+  width:2ch;
+  min-height:0;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  color:var(--muted-strong);
+  font:inherit;
+  font-weight:600;
+  font-variant-numeric:tabular-nums;
+  text-align:center;
+  outline:none;
+}
+
+input.items-number:focus{
+  border:0;
+  background:transparent;
+  box-shadow:none;
+  color:#e8f1ff;
+}
+
+input.items-number::placeholder{
+  color:rgba(176,189,223,.45);
+  font-weight:500;
+}
+
+.items-sep{
+  color:rgba(176,189,223,.55);
+  font-weight:500;
+}
+
+.items-unit{
+  color:var(--muted);
+  font-size:13px;
+  font-weight:500;
+  margin-left:2px;
+}
+
+/* A done count with no total yet: nudge toward the missing number. */
+.items-entry.needs-total input.items-total{
+  border-bottom:1px dashed rgba(255,190,92,.7);
+}
+
+.items-entry.needs-total input.items-total::placeholder{
+  color:rgba(255,190,92,.85);
+}
+
+.items-clear{
+  display:inline-grid;
+  place-items:center;
+  width:22px;
+  height:22px;
+  margin-left:2px;
+  padding:0;
+  border:0;
+  border-radius:6px;
+  background:transparent;
+  color:var(--muted);
+  font:inherit;
+  font-size:16px;
+  line-height:1;
+  cursor:pointer;
+  opacity:.4;
+  transition:opacity var(--transition), background var(--transition), color var(--transition);
+}
+
+.items-entry:hover .items-clear,
+.items-entry:focus-within .items-clear,
+.items-clear:focus-visible{
+  opacity:1;
+}
+
+.items-clear:hover{
+  background:var(--danger-bg);
+  color:#ff8ba5;
+}
+
+.items-clear:focus-visible{
+  outline:2px solid rgba(56,189,248,.9);
+  outline-offset:1px;
+}
+
+/* Touch screens have no hover, so keep these at full strength. */
+@media (hover: none){
+  .items-reveal,
+  .items-clear{
+    opacity:1;
+  }
+}
+
+.item.is-full input.items-number{
+  color:#7df3c6;
 }
 
 .progress-entry{

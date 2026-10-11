@@ -53,6 +53,10 @@ It ships with two pages:
 
 - **Percent progress per task** — drag the slider, or click the number and type it. `↑` / `↓` nudge by 1,
   `Shift` + `↑` / `↓` by 10, `Esc` reverts.
+- **Item counts (optional)** — for tasks made of countable pieces (videos, chapters, problems), click
+  **+ Count items** and enter a total. Type how many are done and the percent works itself out
+  (`47 / 140` → 34%). The slider and percent field still work and update the count, snapping to whole
+  items. Clear both numbers (or hit `×`) to go back to the plain slider.
 - **Overall progress orb** — the average progress across all tasks, as an animated gradient ring, with a
   momentum line that reacts to where you are.
 - **Live stat cards** — Total / Active / Completed / Overall, counting up smoothly when they change.
@@ -120,6 +124,8 @@ There is nothing to install and nothing to build — the whole app is HTML, CSS,
 | Progress number field | `Shift` + `↑` / `↓` | ±10% |
 | Progress number field | `Enter` | Commit |
 | Progress number field | `Esc` | Revert to the saved value |
+| Item count fields | `↑` / `↓` | ±1 item (`Shift` for ±10) |
+| Item count fields | `Enter` / `Esc` | Commit / revert |
 
 ---
 
@@ -145,6 +151,8 @@ The stored shapes are plain JSON, so you can back them up or edit them by hand f
     "completed": false,
     "createdAt": 1758700000000,
     "progress": 65,
+    "itemsTotal": null,   // optional: set with itemsDone to drive progress
+    "itemsDone": null,
     "subtasks": [
       { "id": "s1", "text": "Load flow + short circuit runs", "completed": true }
     ]
